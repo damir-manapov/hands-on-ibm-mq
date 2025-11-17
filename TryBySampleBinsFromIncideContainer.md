@@ -5,7 +5,7 @@
 On your host:
 
 ```bash
-docker compose -f docker/docker-compose.yml exec -it ibm-mq bash
+docker compose -f compose/docker-compose.yml exec -it ibm-mq bash
 ```
 
 Now you’re inside the container.

@@ -7,7 +7,7 @@ I can't check it for now because i can't get IBM MQ Redistributable Client.
 ### Prerequisites
 
 - Node.js 20.11+ and pnpm 10.22+.
-- Docker (to run the IBM MQ container described in `docker/docker-compose.yml`).
+- Docker (to run the IBM MQ container described in `compose/docker-compose.yml`).
 - gitleaks available on your `PATH`.
   - Example install (outside this project folder):
     1. `curl -sSLo /tmp/gitleaks.tar.gz https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz`
@@ -33,7 +33,7 @@ I can't check it for now because i can't get IBM MQ Redistributable Client.
    - `cp env.example .env`
    - Adjust credentials/queue names to match your MQ setup.
 2. Start IBM MQ locally:
-   - `docker compose -f docker/docker-compose.yml up -d`
+   - `docker compose -f compose/docker-compose.yml up -d`
    - Or use the convenience scripts:
      - `pnpm compose:start` – start the stack
      - `pnpm compose:stop` – stop containers

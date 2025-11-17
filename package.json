@@ -19,9 +19,9 @@
     "mq:write": "tsx src/scripts/writeInitialMessage.ts",
     "mq:process": "tsx src/scripts/processQueue.ts",
     "mq:read": "tsx src/scripts/readFinalQueue.ts",
-    "compose:start": "docker compose -f docker/docker-compose.yml up -d",
-    "compose:stop": "docker compose -f docker/docker-compose.yml down",
-    "compose:reset": "docker compose -f docker/docker-compose.yml down -v --remove-orphans",
+    "compose:start": "docker compose -f compose/docker-compose.yml up -d",
+    "compose:stop": "docker compose -f compose/docker-compose.yml down",
+    "compose:reset": "docker compose -f compose/docker-compose.yml down -v --remove-orphans",
     "compose:restart": "pnpm compose:stop && pnpm compose:start"
   },
   "keywords": [
