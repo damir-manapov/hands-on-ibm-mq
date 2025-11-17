@@ -47,7 +47,7 @@ docker compose -f "$COMPOSE_FILE" exec "$SERVICE_NAME" bash -lc "
 "
 
 cat <<'EOT'
-The container is ready. To run the MQ scripts inside the container, use:
+The container is ready. Examples for running scripts inside the container:
 
 docker compose -f compose/docker-compose.yml exec ibm-mq bash -lc '
   export PATH=/opt/nodejs/bin:$PATH XDG_CACHE_HOME=/tmp/.cache \
@@ -56,7 +56,7 @@ docker compose -f compose/docker-compose.yml exec ibm-mq bash -lc '
          MQ_USER=app MQ_PASSWORD=passw0rd &&
   cd /workspace &&
   . /opt/mqm/bin/setmqenv -s &&
-  pnpm mq:write
+  echo "=== Writing message ===" && pnpm mq:write && echo "" && echo "=== Processing message ===" && pnpm mq:process
 '
 EOT
 
