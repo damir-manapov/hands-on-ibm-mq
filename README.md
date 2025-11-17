@@ -39,6 +39,9 @@ I can't check it for now because i can't get IBM MQ Redistributable Client.
      - `pnpm compose:stop` – stop containers
      - `pnpm compose:restart` – stop then start again
      - `pnpm compose:reset` – stop everything and remove volumes/orphans
+   - Need to prep the container so you can run the Node scripts inside it? Execute
+     `./prepare-scripts-inside-container.sh` to install Node/pnpm in the container,
+     copy the project into `/workspace`, and run `pnpm install` there.
 3. Install dependencies: `pnpm install`
 
 ### Queue scripts
