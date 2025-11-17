@@ -56,7 +56,15 @@ docker compose -f compose/docker-compose.yml exec ibm-mq bash -lc '
          MQ_USER=app MQ_PASSWORD=passw0rd &&
   cd /workspace &&
   . /opt/mqm/bin/setmqenv -s &&
-  echo "=== Writing message ===" && pnpm mq:write && echo "" && echo "=== Processing message ===" && pnpm mq:process && echo "" && echo "=== Reading final queue ===" && pnpm mq:read
+  echo "" &&
+  echo "=== Writing message ===" &&
+  pnpm mq:write &&
+  echo "" &&
+  echo "=== Processing message ===" &&
+  pnpm mq:process &&
+  echo "" &&
+  echo "=== Reading final queue ===" &&
+  pnpm mq:read
 '
 EOT
 
