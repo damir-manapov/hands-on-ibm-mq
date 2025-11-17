@@ -66,16 +66,14 @@ export async function drainOutputQueue(): Promise<ProcessedMessage[]> {
       config.outputQueue,
       MQC.MQOO_INPUT_AS_Q_DEF | MQC.MQOO_FAIL_IF_QUIESCING,
       async (queue) => {
-        let message = await getJson<ProcessedMessage>(queue, config.waitIntervalMs);
-        if (!message) {
-          logger.info('No more messages detected on the output queue');
-          return;
-        }
-        do {
+        for (
+          let message = await getJson<ProcessedMessage>(queue, config.waitIntervalMs);
+          message;
+          message = await getJson<ProcessedMessage>(queue, config.waitIntervalMs)
+        ) {
           collected.push(message);
           logger.info(`Consumed message ${message.id} from ${config.outputQueue}`);
-          message = await getJson<ProcessedMessage>(queue, config.waitIntervalMs);
-        } while (message);
+        }
         logger.info('No more messages detected on the output queue');
       }
     );
