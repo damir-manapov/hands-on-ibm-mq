@@ -12,7 +12,6 @@ services:
       - '9443:9443'
     volumes:
       - mqdata:/mnt/mqm
-    restart: unless-stopped
 
 volumes:
   mqdata:

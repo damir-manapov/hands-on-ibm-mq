@@ -64,3 +64,4 @@ All scripts rely on the environment variables described in `env.example`.
 - ESLint is configured with the latest flat config format, disallowing `any` and deprecated APIs.
 - TypeScript configuration is strict and shared across code and tests.
 - Refer to IBM documentation if you need versions beyond 9.2.4 (available from the IBM Container Registry).
+- Need to manually verify MQ with IBM’s sample binaries? See `TryBySampleBinsFromIncideContainer.md` for a step-by-step guide to running `amqsput`/`amqsget` inside the container.
