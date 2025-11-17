@@ -1,0 +1,54 @@
+{
+  "name": "hands-on-ibm-mq",
+  "version": "1.0.0",
+  "description": "Hands-on research project for experimenting with IBM MQ via Docker.",
+  "author": "Damir Manapov",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "typecheck": "tsc --noEmit",
+    "mq:write": "tsx src/scripts/writeInitialMessage.ts",
+    "mq:process": "tsx src/scripts/processQueue.ts",
+    "mq:read": "tsx src/scripts/readFinalQueue.ts",
+    "compose:start": "docker compose -f docker/docker-compose.yml up -d",
+    "compose:stop": "docker compose -f docker/docker-compose.yml down",
+    "compose:reset": "docker compose -f docker/docker-compose.yml down -v --remove-orphans",
+    "compose:restart": "pnpm compose:stop && pnpm compose:start"
+  },
+  "keywords": [
+    "ibm-mq",
+    "mq",
+    "research",
+    "queues"
+  ],
+  "packageManager": "pnpm@10.22.0",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "dependencies": {
+    "ibmmq": "^2.1.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "@vitest/coverage-v8": "^4.0.9",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vitest": "^4.0.9"
+  }
+}

@@ -1,0 +1,19 @@
+services:
+  ibm-mq:
+    image: ibmcom/mq:9.2.4.0-r1-amd64
+    container_name: hands-on-ibm-mq
+    environment:
+      LICENSE: accept
+      MQ_QMGR_NAME: QM1
+      MQ_APP_PASSWORD: passw0rd
+      MQ_ENABLE_METRICS: 'true'
+    ports:
+      - '1414:1414'
+      - '9443:9443'
+    volumes:
+      - mqdata:/mnt/mqm
+    restart: unless-stopped
+
+volumes:
+  mqdata:
+    driver: local
