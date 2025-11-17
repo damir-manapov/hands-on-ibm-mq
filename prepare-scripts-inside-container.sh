@@ -53,7 +53,7 @@ docker compose -f compose/docker-compose.yml exec ibm-mq bash -lc '
   export PATH=/opt/nodejs/bin:$PATH XDG_CACHE_HOME=/tmp/.cache \
          MQ_HOST=localhost MQ_PORT=1414 MQ_CHANNEL=DEV.APP.SVRCONN \
          MQ_QMGR=QM1 MQ_INPUT_QUEUE=DEV.QUEUE.1 MQ_OUTPUT_QUEUE=DEV.QUEUE.2 \
-         MQ_USER=app MQ_PASSWORD=passw0rd &&
+         MQ_USER=app MQ_PASSWORD=passw0rd MQ_VERBOSE=false &&
   cd /workspace &&
   . /opt/mqm/bin/setmqenv -s &&
   echo "" &&

@@ -4,8 +4,18 @@ import { logger } from './utils/logger';
 
 const { MQC } = mq;
 
+function isVerbose(): boolean {
+  return process.env['MQ_VERBOSE'] === 'true' || process.env['MQ_VERBOSE'] === '1';
+}
+
+function verboseLog(message: string, ...optional: unknown[]): void {
+  if (isVerbose()) {
+    logger.info(message, ...optional);
+  }
+}
+
 function connect(config: MqConnectionConfig): Promise<mq.MQQueueManager> {
-  logger.info(
+  verboseLog(
     `connect: Connecting to queue manager ${config.queueManager} via ${config.connectionName}, channel ${config.channel}`
   );
   return new Promise((resolve, reject) => {
@@ -25,12 +35,12 @@ function connect(config: MqConnectionConfig): Promise<mq.MQQueueManager> {
       csp.UserId = config.credentials.username;
       csp.Password = config.credentials.password;
       cno.SecurityParms = csp;
-      logger.info(`connect: Using credentials for user ${config.credentials.username}`);
+      verboseLog(`connect: Using credentials for user ${config.credentials.username}`);
     }
 
-    logger.info('connect: Calling mq.Connx...');
+    verboseLog('connect: Calling mq.Connx...');
     mq.Connx(config.queueManager, cno, (err, manager) => {
-      logger.info(
+      verboseLog(
         `connect: Connx callback invoked, err=${err ? String(err) : 'null'}, manager=${manager ? 'present' : 'null'}`
       );
       if (err || !manager) {
@@ -41,7 +51,7 @@ function connect(config: MqConnectionConfig): Promise<mq.MQQueueManager> {
         reject(err ?? new Error('Unknown MQ connection failure'));
         return;
       }
-      logger.info('connect: Connection successful');
+      verboseLog('connect: Connection successful');
       resolve(manager);
     });
   });
@@ -76,13 +86,13 @@ function openQueue(
   queueName: string,
   openOptions: number
 ): Promise<mq.MQObject> {
-  logger.info(`openQueue: Opening queue ${queueName} with options ${String(openOptions)}`);
+  verboseLog(`openQueue: Opening queue ${queueName} with options ${String(openOptions)}`);
   return new Promise((resolve, reject) => {
     const od = new mq.MQOD();
     od.ObjectName = queueName;
-    logger.info('openQueue: Calling mq.Open...');
+    verboseLog('openQueue: Calling mq.Open...');
     mq.Open(manager, od, openOptions, (err, queue) => {
-      logger.info(
+      verboseLog(
         `openQueue: Open callback invoked, err=${err ? String(err) : 'null'}, queue=${queue ? 'present' : 'null'}`
       );
       if (err || !queue) {
@@ -93,7 +103,7 @@ function openQueue(
         reject(err ?? new Error(`Unable to open queue ${queueName}`));
         return;
       }
-      logger.info(`openQueue: Successfully opened queue ${queueName}`);
+      verboseLog(`openQueue: Successfully opened queue ${queueName}`);
       resolve(queue);
     });
   });
@@ -117,17 +127,17 @@ export async function withQueue<T>(
   openOptions: number,
   handler: (queue: mq.MQObject) => Promise<T>
 ): Promise<T> {
-  logger.info(`withQueue: Starting queue operation for ${queueName}`);
+  verboseLog(`withQueue: Starting queue operation for ${queueName}`);
   const queue = await openQueue(manager, queueName, openOptions);
   try {
-    logger.info(`withQueue: Queue opened, calling handler for ${queueName}`);
+    verboseLog(`withQueue: Queue opened, calling handler for ${queueName}`);
     const result = await handler(queue);
-    logger.info(`withQueue: Handler completed for ${queueName}`);
+    verboseLog(`withQueue: Handler completed for ${queueName}`);
     return result;
   } finally {
-    logger.info(`withQueue: Closing queue ${queueName}`);
+    verboseLog(`withQueue: Closing queue ${queueName}`);
     await closeQueue(queue);
-    logger.info(`withQueue: Queue ${queueName} closed`);
+    verboseLog(`withQueue: Queue ${queueName} closed`);
   }
 }
 
@@ -154,7 +164,7 @@ export async function putJson(queue: mq.MQObject, payload: unknown): Promise<voi
 }
 
 export async function getJson<T>(queue: mq.MQObject, waitIntervalMs: number): Promise<T | null> {
-  logger.info(`getJson: Starting message retrieval, waitIntervalMs=${String(waitIntervalMs)}`);
+  verboseLog(`getJson: Starting message retrieval, waitIntervalMs=${String(waitIntervalMs)}`);
   const md = new mq.MQMD();
   md.Encoding = MQC.MQENC_NATIVE;
   md.CodedCharSetId = MQC.MQCCSI_Q_MGR;
@@ -162,28 +172,28 @@ export async function getJson<T>(queue: mq.MQObject, waitIntervalMs: number): Pr
   gmo.Options =
     MQC.MQGMO_WAIT | MQC.MQGMO_NO_SYNCPOINT | MQC.MQGMO_FAIL_IF_QUIESCING | MQC.MQGMO_CONVERT;
   gmo.WaitInterval = waitIntervalMs;
-  logger.info(
+  verboseLog(
     `getJson: Options=${String(gmo.Options)} (WAIT | NO_SYNCPOINT | FAIL_IF_QUIESCING | CONVERT), WaitInterval=${String(gmo.WaitInterval)}`
   );
 
   const buffer = Buffer.alloc(4 * 1024 * 1024);
 
   return new Promise((resolve, reject) => {
-    logger.info('getJson: Attempting GetSync operation with WAIT');
+    verboseLog('getJson: Attempting GetSync operation with WAIT');
     try {
       const dataLength = mq.GetSync(queue, md, gmo, buffer);
-      logger.info(
+      verboseLog(
         `getJson: GetSync returned, len=${dataLength !== undefined ? String(dataLength) : 'undefined'}`
       );
       if (dataLength === undefined || dataLength === 0) {
-        logger.info('getJson: No message available, returning null');
+        verboseLog('getJson: No message available, returning null');
         resolve(null);
         return;
       }
       try {
-        logger.info(`getJson: Parsing JSON data (${String(dataLength)} bytes)`);
+        verboseLog(`getJson: Parsing JSON data (${String(dataLength)} bytes)`);
         const parsed = JSON.parse(buffer.subarray(0, dataLength).toString('utf-8')) as T;
-        logger.info('getJson: Successfully parsed message');
+        verboseLog('getJson: Successfully parsed message');
         resolve(parsed);
       } catch (parseError) {
         logger.error('getJson: JSON parse error', parseError);
@@ -193,11 +203,11 @@ export async function getJson<T>(queue: mq.MQObject, waitIntervalMs: number): Pr
       }
     } catch (syncError) {
       const mqError = syncError as mq.MQError;
-      logger.warn(
+      verboseLog(
         `getJson: GetSync threw exception, mqrc=${String(mqError.mqrc ?? 'unknown')}, reason=${mqError.message ?? 'unknown'}`
       );
       if (mqError.mqrc === MQC.MQRC_NO_MSG_AVAILABLE) {
-        logger.info('getJson: No message available after wait, returning null');
+        verboseLog('getJson: No message available after wait, returning null');
         resolve(null);
         return;
       }
