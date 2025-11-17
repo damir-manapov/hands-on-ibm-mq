@@ -2,7 +2,7 @@
 
 Research playground for experimenting with IBM MQ queues (Docker image `ibmcom/mq:9.2.4.0-r1-amd64`). IBM no longer publishes images newer than 9.2.4 on Docker Hub; use the IBM Container Registry for newer builds if required.
 
-I can't check it for nod because i can't get IBM MQ Redistributable Client.
+I can't check it for now because i can't get IBM MQ Redistributable Client.
 
 ### Prerequisites
 
